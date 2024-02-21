@@ -1,0 +1,37 @@
+---
+title: 'Peter Gao'
+
+about:
+  id: intro-heading
+  template: trestles
+  image: images/profilepic.jpg
+  image-shape: round
+  links:
+    - icon: envelope
+      href: mailto:roback@stolaf.edu
+    - icon: github
+      href: https://github.com/PeterGao1233
+---
+
+::: {#intro-heading}
+## Peter Gao
+
+Student at St.Olaf College \@ [St. Olaf College](https://wp.stolaf.edu/)
+
+### Education
+TsingHua University High School 2019
+
+In progress:Math and Data Science Concentration 2025 \| St. Olaf College
+:::
+
+### Get in Touch
+
+**Email**: <a href='mailto:gao7@stolaf.edu'>Peter Gao at stolaf.edu</a>
+
+**Housing**: New Hall
+
+**Address**: 1520 St. Olaf Ave, Northfield, MN 55057
+
+**Phone**: 507-581-7662
+
+To learn more about Quarto websites visit <https://quarto.org/docs/websites>.
