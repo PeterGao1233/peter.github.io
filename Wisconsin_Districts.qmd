@@ -1,0 +1,149 @@
+---
+title: "Wisconsin Districts"
+author: "Peter Gao"
+editor_options: 
+  chunk_output_type: console
+---
+```{r}
+#| message: false
+#| warning: false
+library(poliscidata)  
+library(dplyr)
+library(stringr)
+library(ggplot2)
+library(readr)
+library(viridis)
+library(skimr)
+library(sf)
+library(ggplot2)
+devtools::install_github("baumer-lab/fec16")
+library(fec16)
+print(results_house, width = Inf)
+results_house |>
+  group_by(state, district_id) |>
+  summarize(N = n())
+```
+
+```{r}
+#| message: false
+#| warning: false
+
+# summary of the 13 congressional NC districts and the 2012 voting
+district_elections <- results_house |>
+  mutate(district = parse_number(district_id)) |>
+  group_by(state, district) |>
+  summarize(
+    N = n(), 
+    total_votes = sum(general_votes, na.rm = TRUE),
+    d_votes = sum(ifelse(party == "D", general_votes, 0), na.rm = TRUE),
+    r_votes = sum(ifelse(party == "R", general_votes, 0), na.rm = TRUE),
+    .groups = "drop"
+  ) |>
+  mutate(
+    other_votes = total_votes - d_votes - r_votes,
+    r_prop = r_votes / total_votes,  
+    winner = ifelse(r_votes > d_votes, "Republican", "Democrat")
+  )
+WI_results <- district_elections |>
+  filter(state == "WI")
+WI_results |>                  
+  select(-state)
+```
+
+```{r}
+# distribution of total number of votes is narrow by design
+WI_results |>
+  skim(total_votes) 
+ 
+
+# compare total Dem and Rep votes across NC in 2012
+WI_results |>
+  summarize(
+    N = n(), 
+    state_votes = sum(total_votes), 
+    state_d = sum(d_votes), 
+    state_r = sum(r_votes)
+  ) |>
+  mutate(
+    d_prop = state_d / state_votes, 
+    r_prop = state_r / state_votes
+  )
+
+# Proportion of Rep votes by district
+WI_results |>
+  select(district, r_prop, winner) |>
+  arrange(desc(r_prop))
+```
+
+
+
+```{r}
+#| message: false
+#| warning: false
+library(ggplot2)
+library(sf)
+library(ggmap)
+src <- "http://cdmaps.polisci.ucla.edu/shp/districts113.zip"
+lcl_zip <- fs::path(tempdir(), "districts113.zip")
+download.file(src, destfile = lcl_zip)
+lcl_districts <- fs::path(tempdir(), "districts113")
+unzip(lcl_zip, exdir = lcl_districts)
+dsn_districts <- fs::path(lcl_districts, "districtShapes")
+
+
+
+st_layers(dsn_districts)
+
+
+districts <- st_read(dsn_districts, layer = "districts113") |>
+  mutate(DISTRICT = parse_number(as.character(DISTRICT)))
+head(districts, width = Inf)
+class(districts)
+
+WI_shp <- districts |>
+  filter(STATENAME == "Wisconsin")
+WI_shp |>
+  st_geometry() |>
+  plot(col = gray.colors(nrow(WI_shp)))
+
+
+WI_merged <- WI_shp |>
+  st_transform(4326) |>
+  inner_join(WI_results, by = c("DISTRICT" = "district"))
+head(WI_merged, width = Inf)
+
+
+WI <- ggplot(data = WI_merged, aes(fill = winner)) +
+  geom_sf(alpha = 0.5) +
+  geom_sf_label(aes(label = DISTRICT), fill = "white") + 
+  scale_fill_manual("Winner", values = c("blue", "red")) +
+  theme_void()
+
+WI
+
+```
+
+```{r}
+WI +
+  aes(fill = r_prop) + 
+  scale_fill_distiller(
+    "Proportion\nRepublican", 
+    palette = "RdBu", 
+    limits = c(0.2, 0.8)
+  )
+
+library(leaflet)
+pal <- colorNumeric(palette = "RdBu", domain = c(0, 1))
+
+leaflet_WI <- leaflet(WI_merged) |>
+  addTiles() |>
+  addPolygons(
+    weight = 1, fillOpacity = 0.7, 
+    color = ~pal(1 - r_prop),   # so red association with Reps
+    popup = ~paste("District", DISTRICT, "</br>", round(r_prop, 4))
+  ) |>                          # popups show prop Republican
+  setView(lng = -80, lat = 35, zoom = 7)
+leaflet_WI
+```
+
+

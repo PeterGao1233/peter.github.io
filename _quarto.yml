@@ -5,26 +5,32 @@ project:
 website:
   title: "Peter Gao"
   navbar:
+    background: primary
+    search: true
     left:
       - file: index.qmd
-        text: Home
-      - file: courses.qmd
-        text: Courses
-      - file: projects.qmd
-        text: Projects
+        text: "Home"
+      - sidebar:mini_project1
+
+  sidebar:
+    - id: mini_project1
+      title: "mini_project1"
+      contents:
+        - 02_US_States.qmd
+        - 03_Wisconsin_Districts.qmd
+
   page-footer:
     left: |
-      &copy; Peter, 2024<br>
-      All content licensed under <i class='bi-badge-cc'></i>
-      [(CC BY-NC-SA 4.0)](http://creativecommons.org/licenses/by-nc-sa/4.0/)
+      &copy; Peter Gao, 2024<br>
+      All content licensed under ![](https://static.thenounproject.com/png/70967-200.png){height=20px} ([CC BY-NC-SA 4.0](http://creativecommons.org/licenses/by-nc-sa/4.0/))
     right: |
-      Site built with <a href='https://quarto.org/'>Quarto</a>
+      Site built with [Quarto](https://quarto.org/)
 
 format:
   html:
-    theme: sketchy
+    theme: sandstone
     css: styles.css
     toc: true
+    code-overflow: wrap
 
-editor: visual
-
+editor: source

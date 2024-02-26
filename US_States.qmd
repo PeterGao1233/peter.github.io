@@ -1,0 +1,58 @@
+---
+title: "US States"
+sidebar: false
+format:
+  html: default
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r}
+#| message: false
+#| warning: false
+
+library(poliscidata)   # may have to install first
+library(dplyr)
+library(stringr)
+library(ggplot2)
+library(readr)
+library(viridis)
+state_data <- as_tibble(poliscidata::states) |>
+  mutate(state_name = str_squish(str_to_lower(as.character(state)))) |>
+  select(-state)
+print(state_data, n = 5, width = Inf)
+```
+
+```{r}
+
+#| message: false
+#| warning: false
+
+vaccines <- read_csv("https://proback.github.io/264_fall_2024/Data/vacc_Mar21.csv") 
+
+vacc_mar13 <- vaccines |>
+  filter(Date =="2021-03-13") |>
+  select(State, Date, people_vaccinated_per100, share_doses_used, Governor)
+vacc_mar13
+library(maps)
+us_states <- map_data("state")
+head(us_states)
+state_data <- as_tibble(poliscidata::states) |>
+  mutate(state_name = str_squish(str_to_lower(as.character(state)))) |>
+  select(-state)
+
+
+
+state_data |>
+  select(-region) |>
+  right_join(us_states, by = c("state_name" = "region")) |>
+  ggplot(mapping = aes(x = long, y = lat, group = group)) + 
+  geom_polygon(aes(fill = abort_rate08), color = "black") + 
+  labs(fill = "Number of Abortions per 1,000 Women Aged 15-44 (2008)",
+       title = "Number of Abortions per 1,000 Women Aged 15-44 (2008)")+
+  coord_map() + 
+  theme_void() +  
+  scale_fill_viridis()
+```
+
+California, Nevada, and Florida has the highest number of abortions per 1000 women aged 15-44 in 2008. Wyoming has the lowest number of abortions per 1000 women aged 15-44 in 2008.

@@ -8,7 +8,7 @@ about:
   image-shape: round
   links:
     - icon: envelope
-      href: mailto:roback@stolaf.edu
+      href: mailto:gao7@stolaf.edu
     - icon: github
       href: https://github.com/PeterGao1233
 ---
