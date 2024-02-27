@@ -1,7 +1,7 @@
 ---
-title: "projects"
+title: "map project"
 listing:
-  contents: projects
+  contents: map projects
   sort: "title desc"
   type: grid
   categories: true

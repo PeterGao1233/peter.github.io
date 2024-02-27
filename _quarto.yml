@@ -16,8 +16,8 @@ website:
     - id: project
       title: "map project"
       contents:
-        - 02_US_States.qmd
-        - 03_Wisconsin_Districts.qmd
+        - US_States.qmd
+        - Wisconsin_Districts.qmd
 
   page-footer:
     left: |
