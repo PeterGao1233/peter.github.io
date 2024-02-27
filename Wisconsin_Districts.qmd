@@ -28,7 +28,19 @@ results_house |>
 #| message: false
 #| warning: false
 
-# summary of the 13 congressional NC districts and the 2012 voting
+# To install fec 12 the first time, uncomment the code below (you might have to install devtools as well):
+devtools::install_github("baumer-lab/fec12")
+library(fec12)
+print(results_house, width = Inf)
+results_house |>
+  group_by(state, district_id) |>
+  summarize(N = n())
+```
+
+
+```{r}
+#| message: false
+#| warning: false
 district_elections <- results_house |>
   mutate(district = parse_number(district_id)) |>
   group_by(state, district) |>
@@ -54,9 +66,6 @@ WI_results |>
 # distribution of total number of votes is narrow by design
 WI_results |>
   skim(total_votes) 
- 
-
-# compare total Dem and Rep votes across NC in 2012
 WI_results |>
   summarize(
     N = n(), 

@@ -10,11 +10,11 @@ website:
     left:
       - file: index.qmd
         text: "Home"
-      - sidebar:mini_project1
+      - sidebar:project
 
   sidebar:
-    - id: mini_project1
-      title: "mini_project1"
+    - id: project
+      title: "map project"
       contents:
         - 02_US_States.qmd
         - 03_Wisconsin_Districts.qmd
