@@ -55,4 +55,4 @@ state_data |>
   scale_fill_viridis()
 ```
 
-California, Nevada, and Florida has the highest number of abortions per 1000 women aged 15-44 in 2008. Wyoming has the lowest number of abortions per 1000 women aged 15-44 in 2008.
+California, Nevada, New York State and Florida has the highest number of abortions per 1000 women aged 15-44 in 2008. Wyoming has the lowest number of abortions per 1000 women aged 15-44 in 2008.
