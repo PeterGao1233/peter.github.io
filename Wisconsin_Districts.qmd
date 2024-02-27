@@ -130,3 +130,4 @@ WI
 
 ```
 
+In this plot, we can see that Democrat only wins in three districts in Wisconsin, which are district 2,3,and 4. However, Republican wins in 5 districts, which are number 1,5,6,7,and 8. In conclusion, Republican wins in Wisconsin state. 
