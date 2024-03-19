@@ -14,10 +14,11 @@ website:
 
   sidebar:
     - id: project
-      title: "map project"
+      title: "project"
       contents:
         - US_States.qmd
         - Wisconsin_Districts.qmd
+        - mini-project2.qmd
 
   page-footer:
     left: |

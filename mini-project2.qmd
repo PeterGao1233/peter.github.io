@@ -1,0 +1,56 @@
+---
+title: "mini-poject2"
+author: "Peter Gao"
+editor_options: 
+  chunk_output_type: console
+---
+```{r}
+# Initial settings
+mean1 <- 60
+mean2 <- 40
+truediff <- mean1 - mean2
+sd1 <- 15
+sd2 <- 25
+sd_ratio <- sd1 / sd2
+n1 <- 50
+n2 <- 70
+numsims <- 1000
+
+# Try one sampling to see if 95% CI contains the truediff
+samp1 <- rnorm(n1, mean1, sd1)
+samp2 <- rnorm(n2, mean2, sd2)
+result <- t.test(x = samp1, y = samp2, var.equal = TRUE)
+lower <- result$conf.int[1]
+upper <- result$conf.int[2]
+contains_truediff <- (lower <= truediff & upper >= truediff)
+
+# Plot the sampling above
+sim_data <- data.frame(response = c(samp1, samp2),
+                       group = c(rep("Group 1", n1), rep("Group 2", n2)))
+library(ggplot2)
+ggplot(sim_data, aes(x = response, y = group)) +
+  geom_boxplot() +
+  labs(title = "Boxplot of Simulated Data", x = "Value", y = "Group")
+
+# repeat 1000 times
+contains_truediff_vec <- vector("logical", numsims)
+for (i in 1:numsims) {
+  samp1 <- rnorm(n1, mean1, sd1)
+  samp2 <- rnorm(n2, mean2, sd2)
+  result <- t.test(x = samp1, y = samp2, var.equal = TRUE)
+  lower <- result$conf.int[1]
+  upper <- result$conf.int[2]
+  contains_truediff_vec[i] <- (lower <= truediff & upper >= truediff)
+}
+
+# Calculate coverage
+coverage <- mean(contains_truediff_vec)
+print(paste("Estimated Coverage Rate:", coverage))
+
+
+```
+
+I created two groups. Group 1: mean=60, standard deviation=15, sample size=50. Group 2: mean=40, standard deviation=25, sample size=70. I set the numsims=1000 to simulated the for loop for 1000 times to get the estimated coverage rate. The central rectangle in each group's boxplot represents the interquartile range, which contains the middle 50% of the data points. For example, in group 1, the IQR is from 55 to 75. The IQR of group 2 is from 30 to around 78. The line inside each box represents the median of each group. The median of group1 is 60, and the median for group2 is 40. The estimated coverage rate is 0.967. Which means that when I repeating the sample simulation for 1000 times, approximately 96.7% of those intervals captured the true difference, which is slightly higher than the expected 95%. It means that the confidence intervals are slightly more conservative, meaning that they are perhaps wider than necessary to achieve a 95% converge rate. 
+
+
+
