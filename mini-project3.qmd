@@ -1,0 +1,109 @@
+---
+title: "mini-project3"
+author: "Peter Gao"
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r}
+library(ggplot2)
+library(dplyr)
+library(readr)
+library(lubridate)
+library(stringr)
+#barack <- read_csv("Data/tweets_potus.csv") 
+barack <- read_csv("https://proback.github.io/264_fall_2024/Data/tweets_potus.csv")
+#michelle <- read_csv("Data/tweets_flotus.csv") 
+michelle <- read_csv("https://proback.github.io/264_fall_2024/Data/tweets_flotus.csv")
+
+tweets <- bind_rows(barack |>
+                      mutate(person = "Barack"),
+                    michelle |>
+                      mutate(person = "Michelle")) |>
+  mutate(timestamp = ymd_hms(timestamp))
+
+```
+
+Potential things to investigate:
+
+1. How many @ did Barack Obama used in his text, and how many @ did Michelle used in her tweets.
+2. The average length of their tweets where they used @.
+3. On which date they both posted tweets.
+4. How many @, #, RT (retweet), or -mo (personal tweet from Michelle Obama) did Barack Obama used in his tweets, make a plot.
+5. 
+```{r}
+barack_tweet_count <- nrow(barack)
+michelle_tweet_count <- nrow(michelle)
+tweet_counts <- data.frame(
+  person = c("Barack", "Michelle"),
+  count = c(barack_tweet_count, michelle_tweet_count)
+)
+ggplot(tweet_counts, aes(x = person, y = count, fill = person)) +
+  geom_bar(stat = "identity") +
+  theme_minimal() +
+  labs(title = "Total Number of Tweets by Barack and Michelle Obama",
+       x = "Person",
+       y = "Tweet Count")
+```
+
+According to the plot, Michelle Obama had much more tweets than Barack Obama. 
+
+1. How many @ did Barack Obama used in his text, and how many @ did Michelle used in her tweets.
+```{r}
+barack_at_count <- sum(str_count(barack$text, "@"))
+michelle_at_count <- sum(str_count(michelle$text, "@"))
+barack_at_count
+michelle_at_count
+
+```
+It seems like Barack Obama used 94 @ in his tweets, and Michelle used 4172 @ in her tweets.
+
+
+
+```{r}
+
+barack_avg_length <- mean(nchar(barack$text[str_detect(barack$text, "@")]))
+michelle_avg_length <- mean(nchar(michelle$text[str_detect(michelle$text, "@")]))
+barack_avg_length
+michelle_avg_length
+```
+
+In their tweets that including special character @, the average length of Barack Obama's tweets is 128.631 words, and the average length of Michelle Obama's tweets is 132,1958 words.
+
+```{r}
+barack_counts <- data.frame(
+  string = c("@", "#", "RT", "-mo"),
+  count = c(
+    sum(str_count(barack$text, "@")),
+    sum(str_count(barack$text, "#")),
+    sum(str_count(barack$text, "\\bRT\\b")), 
+    sum(str_count(barack$text, "-mo")) 
+  )
+)
+ggplot(barack_counts, aes(x = string, y = count, fill = string)) +
+  geom_bar(stat = "identity") +
+  theme_minimal() +
+  labs(title = "Special String Counts in Barack Obama's Tweets",
+       x = "String",
+       y = "Count") 
+```
+
+```{r}
+michelle_counts <- data.frame(
+  string = c("@", "#", "RT", "-bo"),
+  count = c(
+    sum(str_count(michelle$text, "@")),
+    sum(str_count(michelle$text, "#")),
+    sum(str_count(michelle$text, "\\bRT\\b")), 
+    sum(str_count(michelle$text, "-bo")) 
+  )
+)
+ggplot(michelle_counts, aes(x = string, y = count, fill = string)) +
+  geom_bar(stat = "identity") +
+  theme_minimal() +
+  labs(title = "Special String Counts in Michelle Obama's Tweets",
+       x = "String",
+       y = "Count")
+```
+
+It seems like Barack Obama used 94 @, 51#, 17 RT and 0 -mo in his tweets. Michelle Obama used 4172 @, 3532#, 1308 RT, and 7 -bo in her tweets. 

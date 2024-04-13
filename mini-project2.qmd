@@ -1,5 +1,5 @@
 ---
-title: "mini-poject2"
+title: "mini-project2"
 author: "Peter Gao"
 editor_options: 
   chunk_output_type: console

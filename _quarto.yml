@@ -19,6 +19,7 @@ website:
         - US_States.qmd
         - Wisconsin_Districts.qmd
         - mini-project2.qmd
+        - mini-project3.qmd
 
   page-footer:
     left: |
