@@ -288,14 +288,6 @@ dbl (5): tweet_id, in_reply_to_status_id, in_reply_to_user_id, retweeted_sta...
 <span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>                      <span class="fu">mutate</span>(<span class="at">person =</span> <span class="st">"Michelle"</span>)) <span class="sc">|&gt;</span></span>
 <span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">timestamp =</span> <span class="fu">ymd_hms</span>(timestamp))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Potential things to investigate:</p>
-<ol type="1">
-<li>How many @ did Barack Obama used in his text, and how many @ did Michelle used in her tweets.</li>
-<li>The average length of their tweets where they used @.</li>
-<li>On which date they both posted tweets.</li>
-<li>How many @, #, RT (retweet), or -mo (personal tweet from Michelle Obama) did Barack Obama used in his tweets, make a plot.</li>
-<li></li>
-</ol>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>barack_tweet_count <span class="ot">&lt;-</span> <span class="fu">nrow</span>(barack)</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>michelle_tweet_count <span class="ot">&lt;-</span> <span class="fu">nrow</span>(michelle)</span>
@@ -384,6 +376,59 @@ dbl (5): tweet_id, in_reply_to_status_id, in_reply_to_user_id, retweeted_sta...
 </div>
 </div>
 <p>It seems like Barack Obama used 94 @, 51#, 17 RT and 0 -mo in his tweets. Michelle Obama used 4172 @, 3532#, 1308 RT, and 7 -bo in her tweets.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>barack<span class="sc">$</span>Date <span class="ot">&lt;-</span> <span class="fu">as.Date</span>(barack<span class="sc">$</span>timestamp)</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>michelle<span class="sc">$</span>Date <span class="ot">&lt;-</span> <span class="fu">as.Date</span>(michelle<span class="sc">$</span>timestamp)</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>daily_tweets_barack <span class="ot">&lt;-</span> barack <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(Date) <span class="sc">%&gt;%</span> <span class="fu">summarize</span>(<span class="at">Count =</span> <span class="fu">n</span>())</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>daily_tweets_michelle <span class="ot">&lt;-</span> michelle <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(Date) <span class="sc">%&gt;%</span> <span class="fu">summarize</span>(<span class="at">Count =</span> <span class="fu">n</span>())</span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">data =</span> daily_tweets_barack, <span class="fu">aes</span>(<span class="at">x =</span> Date, <span class="at">y =</span> Count, <span class="at">colour =</span> <span class="st">"Barack"</span>), <span class="at">size =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">data =</span> daily_tweets_michelle, <span class="fu">aes</span>(<span class="at">x =</span> Date, <span class="at">y =</span> Count, <span class="at">colour =</span> <span class="st">"Michelle"</span>), <span class="at">size =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Daily Tweet Volume"</span>,</span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Date"</span>,</span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Tweet Count"</span>) <span class="sc">+</span></span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"Barack"</span> <span class="ot">=</span> <span class="st">"blue"</span>, <span class="st">"Michelle"</span> <span class="ot">=</span> <span class="st">"red"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
+ℹ Please use `linewidth` instead.</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="mini-project3_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>The plot above shows that the daily tweets that Barack and Michelle sent. From the plot, we can see that Michelle Obama sent more daily tweets than Barack Obama, since Barack Obama was the president, so he was busy with his country business.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>count_urls <span class="ot">&lt;-</span> <span class="cf">function</span>(data) {</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">sum</span>(<span class="fu">str_count</span>(data<span class="sc">$</span>text, <span class="st">"http(s)?://</span><span class="sc">\\</span><span class="st">S+"</span>))</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>barack_url_count <span class="ot">&lt;-</span> <span class="fu">count_urls</span>(barack)</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>michelle_url_count <span class="ot">&lt;-</span> <span class="fu">count_urls</span>(michelle)</span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">paste</span>(<span class="st">"Barack URL count:"</span>, barack_url_count))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Barack URL count: 141"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">paste</span>(<span class="st">"Michelle URL count:"</span>, michelle_url_count))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Michelle URL count: 3353"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Prepare the data for plotting</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>url_counts <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">Person =</span> <span class="fu">c</span>(<span class="st">"Barack"</span>, <span class="st">"Michelle"</span>),</span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">URL_Count =</span> <span class="fu">c</span>(barack_url_count, michelle_url_count)</span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(url_counts, <span class="fu">aes</span>(<span class="at">x =</span> Person, <span class="at">y =</span> URL_Count, <span class="at">fill =</span> Person)) <span class="sc">+</span></span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"identity"</span>) <span class="sc">+</span></span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Count of Tweets Containing URLs by Barack and Michelle Obama"</span>,</span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Person"</span>,</span>
+<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Number of Tweets with URLs"</span>) <span class="sc">+</span></span>
+<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="mini-project3_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>The plot above shows the count of tweets of containing URLs, and Michelle Obama sent more tweets with URLs than Barack Obama.</p>
 
 
 

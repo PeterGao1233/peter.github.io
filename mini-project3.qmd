@@ -24,13 +24,6 @@ tweets <- bind_rows(barack |>
 
 ```
 
-Potential things to investigate:
-
-1. How many @ did Barack Obama used in his text, and how many @ did Michelle used in her tweets.
-2. The average length of their tweets where they used @.
-3. On which date they both posted tweets.
-4. How many @, #, RT (retweet), or -mo (personal tweet from Michelle Obama) did Barack Obama used in his tweets, make a plot.
-5. 
 ```{r}
 barack_tweet_count <- nrow(barack)
 michelle_tweet_count <- nrow(michelle)
@@ -107,3 +100,44 @@ ggplot(michelle_counts, aes(x = string, y = count, fill = string)) +
 ```
 
 It seems like Barack Obama used 94 @, 51#, 17 RT and 0 -mo in his tweets. Michelle Obama used 4172 @, 3532#, 1308 RT, and 7 -bo in her tweets. 
+
+```{r}
+barack$Date <- as.Date(barack$timestamp)
+michelle$Date <- as.Date(michelle$timestamp)
+daily_tweets_barack <- barack %>% group_by(Date) %>% summarize(Count = n())
+daily_tweets_michelle <- michelle %>% group_by(Date) %>% summarize(Count = n())
+ggplot() +
+  geom_line(data = daily_tweets_barack, aes(x = Date, y = Count, colour = "Barack"), size = 1) +
+  geom_line(data = daily_tweets_michelle, aes(x = Date, y = Count, colour = "Michelle"), size = 1) +
+  labs(title = "Daily Tweet Volume",
+       x = "Date",
+       y = "Tweet Count") +
+  theme_minimal() +
+  scale_color_manual(values = c("Barack" = "blue", "Michelle" = "red"))
+```
+
+The plot above shows that the daily tweets that Barack and Michelle sent. From the plot, we can see that Michelle Obama sent more daily tweets than Barack Obama, since Barack Obama was the president, so he was busy with his country business. 
+
+```{r}
+count_urls <- function(data) {
+  sum(str_count(data$text, "http(s)?://\\S+"))
+}
+barack_url_count <- count_urls(barack)
+michelle_url_count <- count_urls(michelle)
+print(paste("Barack URL count:", barack_url_count))
+print(paste("Michelle URL count:", michelle_url_count))
+# Prepare the data for plotting
+url_counts <- data.frame(
+  Person = c("Barack", "Michelle"),
+  URL_Count = c(barack_url_count, michelle_url_count)
+)
+library(ggplot2)
+ggplot(url_counts, aes(x = Person, y = URL_Count, fill = Person)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Count of Tweets Containing URLs by Barack and Michelle Obama",
+       x = "Person",
+       y = "Number of Tweets with URLs") +
+  theme_minimal()
+```
+
+The plot above shows the count of tweets of containing URLs, and Michelle Obama sent more tweets with URLs than Barack Obama.
